@@ -24,7 +24,7 @@ if beh_rating != 'consensus' and beh_rating != 'individual':
 indices = np.load('./indices.npy')
 
 # Path to control regressor
-if len(sys.argv) > 4:
+if len(sys.argv) > 5:
     AddReg = sys.argv[5]
 else:
     AddReg = None

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-module load conda
-conda activate awkwardness_ets
+# ensure venv/uv/conda is active before running or add activation/source here
 
-datadir=$1
-subj=$2
-regname=$3
-AddReg=$4
+DataDir=$1
+Subj=$2
+Regname=$3
+BehRating=$4
+AddReg=$5
 
 
-python ets_sub_linreg_prewhiten_consensus.py ${datadir} ${subj} ${regname} ${AddReg}
+python ets_sub_linreg_prewhiten.py ${DataDir} ${Subj} ${Regname} ${BehRating} ${AddReg}
 

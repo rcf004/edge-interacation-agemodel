@@ -5,15 +5,19 @@ Created on Wed Nov 20 22:32:13 2024
 
 @author: robfren
 """
+from pathlib import Path
 import numpy as np
 from scipy import stats
 import matplotlib
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 class Matmanip:
     def __init__(self):
-        self.spin_mat_full = np.load('/N/project/NimbleMRI/Roberto/data_temphold/spin_schaefer_full.npy')
+        self.spin_mat_full = np.load(ROOT / 'misc' / 'spin_schaefer_full.npy')
+        labfile = ROOT / 'misc' / 'schaefer200_tian1_labels.txt'
 
-        labfile = '/N/project/NimbleMRI/SNACK_Kretzel/code/level2/eTS/custom_parc/schaefer200_tian1_labels.txt'
         with open(labfile, 'r') as f:
             labs = f.readlines()
 
@@ -333,8 +337,8 @@ def check_null_isx(model, null_model, alpha=0.05):
     for rowi in range(model.shape[0]):
         for coli in range(model.shape[1]):
             t_block = model[rowi, coli]
-            keys = [int(k) for k, v in t_block.items()]
-            vals = [int(v) for k, v in t_block.items()]
+            keys = [int(k) for k, _ in t_block.items()]
+            vals = [int(v) for _, v in t_block.items()]
             toprank = keys[vals.index(max(vals))]
             null_full = null_model[:, rowi, coli]
             null = np.array([int(d[toprank]) for d in null_full])

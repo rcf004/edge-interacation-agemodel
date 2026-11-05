@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # shell script that submits python regression script in parallel to SLURM scheduler
-accountID=r00223 		# required for IU slurm submission
-email=robfren@iu.edu 	# for SLURM email notifications
+accountID=ACCNUM 		# required for IU slurm submission
+email=email@org.com 	# for SLURM email notifications
 
 # specify directory where raw data (parcellated timeseries) are located 
-datadir="/N/project/NimbleMRI/SNACK_Kretzel/derivatives/xcp_d_GSR_confounds/xcp_d"
+datadir="/path/to/data"
 
 # specify behavior name- should align with input behavior of interest. ie. awk_hrf.npy
 beh="awk"
@@ -16,6 +16,8 @@ mkdir -p ./logs/${curTime}_${beh}_edge_regression_slurmlogs_step   # create logs
 filelist=../../subject_lists/sublist.tsv
 
 subjid=($(awk -F '\t' '{print $1}' ${filelist} | awk 'NR!=1 {print}'))
+
+BehRating="individual"  #individual to use individual regressors, consensus to use consensus regressor
 
 AddReg=""
 # options for AddReg currently:
@@ -34,7 +36,7 @@ for i in "${subjid[@]}"; do
             -J ${i} \
             --time=1:00:00 \
             ./sublevel_linreg.sh \
-            ${datadir} ${i} ${beh} ${AddReg}
+            ${datadir} ${i} ${beh} ${BehRating} ${AddReg}
             sleep 2
 
 done

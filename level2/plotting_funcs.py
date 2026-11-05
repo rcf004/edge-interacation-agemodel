@@ -6,15 +6,15 @@ Created on Thu Nov 21 18:33:45 2024
 @author: robfren
 """
 
-
-
 import os
+from pathlib import Path
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap
 import matplotlib.cm as cm
 import numpy as np
 
@@ -23,6 +23,22 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 from nilearn import datasets, surface, plotting
 from nilearn.surface import SurfaceImage
+
+def adj_cmap(cmap, exp=1.5):
+    # adjust colormap to increase contrast close to 0 (log)
+    adj_cmap = cmap(np.arange(cmap.N))
+
+    # pull halves- put in rgb space
+    upper_half = adj_cmap[:128,:]
+    lower_half = adj_cmap[-1:128:-1,:] # reverse
+    # adjust colormap values by exponential scaling
+    upper_half = upper_half**exp
+    lower_half = lower_half**exp
+    # splice arrays back together
+    adj_cmap = np.append(upper_half, lower_half[::-1], axis=0)
+    adj_cmap = ListedColormap(adj_cmap)
+
+    return adj_cmap
 
 def CurlyBrace_v(ax, ll_corner=(0, 0), width=1, height=1):
     Path = mpath.Path
@@ -300,6 +316,7 @@ def get_inward_border_faces(parcel_labels, faces, parcel_id, n_rings=2):
     )
 
     return border_faces
+
 def plot_surf(
     axis_avg,
     contour_bin,
@@ -338,10 +355,12 @@ def plot_surf(
     # ------------------------------------------------------------
 
     bdir = (
-        '/N/project/NimbleMRI/Roberto/parcs/'
-        'CBIG-0.27.2-update_reorder_func/'
-        'stable_projects/brain_parcellation/'
-        'Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3'
+        'POINT/TO/LOCAL/CLONE/OF/SCHAEFER_PARC'
+
+        # e.g.
+        # 'CBIG-0.27.2-update_reorder_func/'
+        # 'stable_projects/brain_parcellation/'
+        # 'Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3'
     )
 
 
@@ -832,9 +851,8 @@ def plot_surf_orig(axis_avg, contour_bin, model_name, contour_col = 'g', nilearn
     # this needs to point to local copy of freesurfer schaefer parcellation - get all 3 for different mesh qualities.
     # found here: https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3
  
-    # bdir = '/local/path/to/schaefer/freesurfer/parcellation/FreeSurfer5.3'
-    bdir = '/N/project/NimbleMRI/Roberto/parcs/CBIG-0.27.2-update_reorder_func/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3'
-
+    bdir = '/local/path/to/schaefer/freesurfer/parcellation/FreeSurfer5.3'
+    
     if mesh_qual.lower() == 'high':
         fs = 'fsaverage'
     elif mesh_qual.lower() == 'med':

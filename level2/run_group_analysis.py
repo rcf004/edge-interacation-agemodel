@@ -31,24 +31,10 @@ import pickle
 
 #%%
 
-def adj_cmap(cmap, exp=1.5):
-    # adjust colormap to increase contrast close to 0 (log)
-    adj_cmap = cmap(np.arange(cmap.N))
-
-    # pull halves- put in rgb space
-    upper_half = adj_cmap[:128,:]
-    lower_half = adj_cmap[-1:128:-1,:] # reverse
-    # adjust colormap values by exponential scaling
-    upper_half = upper_half**exp
-    lower_half = lower_half**exp
-    # splice arrays back together
-    adj_cmap = np.append(upper_half, lower_half[::-1], axis=0)
-    adj_cmap = ListedColormap(adj_cmap)
-
-    return adj_cmap
-
-
 ROOT = Path(__file__).resolve().parents[1]
+
+
+# SETTING GLOBALS
 
 ya_sublist = ROOT / 'subject_lists' / 'ya_sublist_goodsubs.tsv'
 oa_sublist = ROOT / 'subject_lists' / 'oa_sublist_goodsubs.tsv'
@@ -69,19 +55,23 @@ beh = 'awk'
 
 debug_surf_maps = {}
 
-rerun_spin = False
+rerun_spin = True
 include_rest = False
 contour = True
 contour_group = False
 contour_col = "#00cf45ff"
-save_models = False
+
 load_models = True
+
+if load_models == True:
+    save_models = False
+else:
+    save_models = True
 
 
 
 
 # run YA and OA unthresholded maps and create surface plots
-
 models = {}
 
 for grouplabel, sublist in zip(['YA', 'OA'], [ya_sublist, oa_sublist]):
@@ -108,7 +98,7 @@ for grouplabel, sublist in zip(['YA', 'OA'], [ya_sublist, oa_sublist]):
     models[grouplabel] = awk_model
 
     print('plotting...')
-    adj_PuOr_r = adj_cmap(plt.cm.PuOr_r, exp=1.5)
+    adj_PuOr_r = pf.adj_cmap(plt.cm.PuOr_r, exp=1.5)
 
 
 # determine shared min and max for plotting
@@ -301,7 +291,7 @@ if save_models:
 #%%
 
 
-adj_RdBu_r = adj_cmap(plt.cm.RdBu_r, exp=1.5)
+adj_RdBu_r = pf.adj_cmap(plt.cm.RdBu_r, exp=1.5)
 nilearn_kwargs = {'cmap': adj_RdBu_r, 'threshold': 0.0001}
  
 
