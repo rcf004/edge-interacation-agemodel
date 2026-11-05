@@ -47,9 +47,14 @@ trim = 200
 spin_iters = 10_000
 thr = 0.05
 
+beh = 'awk'
+beh_rating = 'individual' # individual or consensus
 
-datadir = ROOT / 'level1' / 'data' / 'sub_level_edge_model_prewhiten_awk'
-rest_dir = ROOT / 'RSFC_control' / 'RSFC_Data'
+if beh_rating not in ('individual', 'consensus'):
+    raise ValueError('`beh_rating` variable must be `individual` or `consensus`')
+
+datadir = ROOT / 'level1' / 'data' / f'sub_level_edge_model_prewhiten_{beh_rating}_{beh}'
+rest_dir = ROOT / 'RSFC_Data' # point to parent of subject level data directory containing resting state matrices
 
 beh = 'awk'
 
@@ -154,24 +159,30 @@ for grouplabel in ['YA', 'OA']:
 
 
 
+
 # run age model with both YA and OA
 if load_models:
     with open(f'figs/matrix_plots/{beh}_group_overall_effect_rest_cov-{include_rest}/overall_model.pkl', 'rb') as f:
         overall_model = pickle.load(f)
     with open(f'figs/matrix_plots/{beh}_group_age_effect_rest_cov-{include_rest}/age_model.pkl', 'rb') as f:
         age_model = pickle.load(f)
+
+    OA_idx = np.where([int(sub.split('-')[1]) < 1000 for sub in overall_model.subs])[0]
+    YA_idx = np.where([int(sub.split('-')[1]) > 1000 for sub in overall_model.subs])[0]
+
 else:
     print('\n\n-------------------------------')
     print(f'running omnibus age test...'.upper())
     print('-------------------------------\n')
 
-    overall_model = tp.Groupmodel(f'{beh}_group_overall_effect_rest_cov-{include_rest}', group_sublist, root)
+    overall_model = tp.Groupmodel(f'{beh}_group_overall_effect_rest_cov-{include_rest}', group_sublist, datadir)
     overall_model.generate_term(ntotal)
-    age_model = tp.Groupmodel(f'{beh}_group_age_effect_rest_cov-{include_rest}', group_sublist, root)
+    age_model = tp.Groupmodel(f'{beh}_group_age_effect_rest_cov-{include_rest}', group_sublist, datadir)
     age_model.generate_term(ntotal)
 
     OA_idx = np.where([int(sub.split('-')[1]) < 1000 for sub in overall_model.subs])[0]
     YA_idx = np.where([int(sub.split('-')[1]) > 1000 for sub in overall_model.subs])[0]
+
 
     if include_rest:
         print('running age model with resting state as covariate...')

@@ -75,9 +75,12 @@ Contains the participant-level edge-time-series regression and SLURM submission 
 
 Contains the scripts for loading participant-level results, constructing nodal and edge matrices, fitting group-level models, performing statistical correction and spatial permutation tests, and generating visualizations.
 
+Main:
+- `run_group_analysis.py`: Group-level analysis driver and generation of figures, including cortical surface maps, connectivity matrices, boxplots, and connectome visualizations.
+
+Supporting:
 - `mat_manip.py`: Matrix reorganization, network indexing, spatial spin tests, and associated utilities.
 - `termpull.py`: Group-level model organization, feature-wise testing, matrix construction, and network-level permutation testing.
-- `output_driver_refactor.py`: Group-level analysis driver and generation of figures, including cortical surface maps, connectivity matrices, boxplots, and connectome visualizations.
 - `plotting_funcs.py`: Plotting utilities for functional connectivity matrices, cortical surface maps, and network borders.
 
 ### `subject_lists/`: Participant Lists
@@ -137,20 +140,26 @@ Participant-level scripts additionally use Python's standard-library modules for
 ## virtual environment setup
 
 # Conda
+```bash
 conda create -n awkwardness_ets python=3.11
 conda activate awkwardness_ets
 python -m pip install -r requirements.txt
+```
 
 # Standard Python venv
+```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+```
 
 # uv
+```bash
 uv venv
 uv pip install -r requirements.txt
+```
 
-The included SLURM scripts were written for the Indiana University computing environment and assume an existing Conda environment named `awkwardness_ets`.
+The included SLURM scripts were developed for the Indiana University HPC environment but do not require a specific Python environment manager. Users should ensure that their preferred Python environment is available to the submitted jobs and configure the SLURM account, resource requirements, and input paths accordingly.
 
 ## Running the Analysis
 
@@ -210,6 +219,23 @@ Group-level analysis generates:
 - Connectome visualizations of significant edges
 
 Results and figures are organized into `data/` and `figs/` directories generated during analysis.
+
+## Data Availability
+
+The data and supporting files required to reproduce the analyses are available through Zenodo:
+
+**[Zenodo repository link — to be added]**
+
+The accompanying archive contains:
+
+- `regs/` — HRF-convolved individualized and consensus behavioral regressors.
+- `level1/data/` — Participant-level model outputs used in the group-level analyses.
+- `RSFC_control/` — Resting-state functional connectivity data used in the sensitivity analyses.
+- `misc/` — Schaefer atlas labels and spatial spin permutation matrices used for network-level analyses.
+
+These files are distributed separately from the analysis code due to their size. After downloading and extracting the archive, place the directories in the corresponding locations within the cloned repository, preserving their directory structure.
+
+The original neuroimaging data are not included in this archive.
 
 
 ## Citation

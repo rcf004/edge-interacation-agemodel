@@ -13,7 +13,7 @@ beh="awk"
 curTime=`date +"%Y%m%d-%H%M%S"`     # pull date for -o/-e logs
 mkdir -p ./logs/${curTime}_${beh}_edge_regression_slurmlogs_step   # create logs directory
 
-filelist=../../subject_lists/sublist.tsv
+filelist=../subject_lists/sublist_goodsubs.tsv
 
 subjid=($(awk -F '\t' '{print $1}' ${filelist} | awk 'NR!=1 {print}'))
 
